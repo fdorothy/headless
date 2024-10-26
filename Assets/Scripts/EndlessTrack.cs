@@ -24,6 +24,7 @@ public class EndlessTrack : MonoBehaviour
         if (meshPaths.Count > 0)
         {
             mp.transform.position = meshPaths[meshPaths.Count - 1].transform.position + Vector3.right * height;
+            mp.offset = meshPaths[meshPaths.Count - 1].offset + height;
         } else
         {
             mp.transform.localPosition = Vector3.zero;
@@ -33,21 +34,33 @@ public class EndlessTrack : MonoBehaviour
 
     void ReuseMeshPath(MeshPath meshPath)
     {
-        meshPath.transform.position = meshPaths[meshPaths.Count - 1].transform.position + Vector3.right * height;
+        MeshPath previousPath = meshPaths[meshPaths.Count - 1];
+        meshPath.transform.position = previousPath.transform.position + Vector3.right * height;
+        meshPath.offset = previousPath.offset + height;
+        meshPath.RecalculateVertexPositions(true);
         meshPaths.Add(meshPath);
     }
 
     // Update is called once per frame
     void Update()
     {
+        // move the paths
         for (int i = 0; i < meshPaths.Count; i++)
         {
             MeshPath mp = meshPaths[i];
             Transform obj = mp.transform;
             obj.position += Vector3.left * Time.deltaTime * Game.singleton.speed;
-            if (obj.position.x < -height*2)
+        }
+
+        // reuse old paths
+        for (int i = 0; i < meshPaths.Count; i++)
+        {
+            MeshPath mp = meshPaths[i];
+            if (mp.transform.position.x < -height * 2)
             {
                 meshPaths.RemoveAt(i);
+                //Destroy(mp.gameObject);
+                //AddMeshPath();
                 ReuseMeshPath(mp);
             }
         }

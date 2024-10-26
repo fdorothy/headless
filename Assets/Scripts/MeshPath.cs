@@ -9,10 +9,19 @@ public class MeshPath : MonoBehaviour
     int resolutionWidth = 100;
     int resolutionHeight = 5;
     float heightScale = 0.1f;
+    public float offset = 0f;
 
     public Color pathColor = Color.red;
     public Color edgeColor = Color.green;
     public float falloff = 1.0f;
+
+    Vector3[] vertices;
+    Color[] colors;
+
+    public Vector3[] getVertices() { return vertices; }
+
+    MeshFilter meshFilter;
+    Mesh mesh;
 
     // Start is called before the first frame update
     void Start()
@@ -28,23 +37,13 @@ public class MeshPath : MonoBehaviour
 
     void GeneratePath()
     {
-        MeshFilter meshFilter = GetComponent<MeshFilter>();
-        Mesh mesh = meshFilter.mesh;
+        meshFilter = GetComponent<MeshFilter>();
+        mesh = meshFilter.mesh;
 
-        Vector3[] vertices = new Vector3[resolutionWidth * resolutionHeight];
-        Color[] colors = new Color[vertices.Length];
+        vertices = new Vector3[resolutionWidth * resolutionHeight];
+        colors = new Color[vertices.Length];
 
-        for (int i=0; i<resolutionWidth; i++)
-        {
-            float t = (float)i / (resolutionWidth - 1);
-            float h = GetHeight(t * height);
-            for (int j=0; j<resolutionHeight; j++)
-            {
-                float s = (float)j / (resolutionHeight - 1);
-                vertices[i + j * resolutionWidth] = new Vector3(t * height, 0f, s * width) + Vector3.forward * h;
-                colors[i + j * resolutionWidth] = Color.Lerp(edgeColor, pathColor, TriangleWave(s));
-            }
-        }
+        RecalculateVertexPositions();
 
         int[] triangles = new int[3 * 2 * resolutionWidth * resolutionHeight];
         int index = 0;
@@ -62,11 +61,30 @@ public class MeshPath : MonoBehaviour
             }
         }
 
-        mesh.vertices = vertices;
         mesh.triangles = triangles;
-        mesh.colors = colors;
         mesh.RecalculateNormals();
         meshFilter.mesh = mesh;
+    }
+
+    public void RecalculateVertexPositions(bool setMesh = false)
+    {
+        for (int i = 0; i < resolutionWidth; i++)
+        {
+            float t = (float)i / (resolutionWidth - 1);
+            float x = t * height;
+            float h = GetHeight(x + offset);
+            for (int j = 0; j < resolutionHeight; j++)
+            {
+                float s = (float)j / (resolutionHeight - 1);
+                vertices[i + j * resolutionWidth] = new Vector3(x, 0f, s * width) + Vector3.forward * h;
+                colors[i + j * resolutionWidth] = Color.Lerp(edgeColor, pathColor, TriangleWave(s));
+            }
+        }
+
+        mesh.vertices = vertices;
+        mesh.colors = colors;
+        if (setMesh)
+            meshFilter.mesh = mesh;
     }
 
     // Gets the heigh of terrain at current position.
