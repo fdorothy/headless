@@ -14,7 +14,10 @@ public class Villager : MonoBehaviour
     {
         startPosition = transform.position;
         target = startPosition + Vector3.left * 10f;
-        yield return new WaitForSeconds(2f);
+        var x = 0.5f;
+        yield return new WaitForSeconds(2f - x);
+        SoundEffects.singleton.audioSource.PlayOneShot(SoundEffects.singleton.blast, 0.5f);
+        yield return new WaitForSeconds(x);
         Game.singleton.SpawnBullet(transform.position + Vector3.left * 1.5f);
         yield return new WaitForSeconds(.5f);
         target = startPosition;

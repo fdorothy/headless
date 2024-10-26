@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     float jumpStopCooldown = 0.0f;
     float jumpStopCooldownMax = 0.75f;
     public Animator animator;
+    public AudioSource trotSound;
     bool dead = false;
 
     // Start is called before the first frame update
@@ -29,6 +30,7 @@ public class Player : MonoBehaviour
         if (dead)
         {
             animator.SetBool("jumping", true);
+            trotSound.Stop();
             return;
         }
 
@@ -85,6 +87,7 @@ public class Player : MonoBehaviour
         {
             Game.singleton.score += 1;
             Game.singleton.DestroyMovingObject(other.transform);
+            SoundEffects.singleton.audioSource.PlayOneShot(SoundEffects.singleton.blip);
         } else if (other.transform.tag == "Deadly")
         {
             Game.singleton.GameOver();
