@@ -31,18 +31,24 @@ public class EndlessTrack : MonoBehaviour
         meshPaths.Add(mp);
     }
 
+    void ReuseMeshPath(MeshPath meshPath)
+    {
+        meshPath.transform.position = meshPaths[meshPaths.Count - 1].transform.position + Vector3.right * height;
+        meshPaths.Add(meshPath);
+    }
+
     // Update is called once per frame
     void Update()
     {
         for (int i = 0; i < meshPaths.Count; i++)
         {
-            Transform obj = meshPaths[i].transform;
+            MeshPath mp = meshPaths[i];
+            Transform obj = mp.transform;
             obj.position += Vector3.left * Time.deltaTime * Game.singleton.speed;
             if (obj.position.x < -height*2)
             {
                 meshPaths.RemoveAt(i);
-                Destroy(obj.gameObject);
-                AddMeshPath();
+                ReuseMeshPath(mp);
             }
         }
     }
