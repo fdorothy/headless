@@ -15,5 +15,6 @@ public class SoundEffects : MonoBehaviour
     void Awake()
     {
         singleton = this;
+        audioSource.PlayOneShot(crash, 0.0f);
     }
 }

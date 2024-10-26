@@ -1037,7 +1037,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blip: {fileID: 8300000, guid: e96a35baccb075045b6ceb0860684d83, type: 3}
-  crash: {fileID: 0}
+  crash: {fileID: 8300000, guid: d189316a697f48e44ba42e6d1bca5881, type: 3}
   blast: {fileID: 8300000, guid: e018de9975b20a442bc978ec4c4e56d8, type: 3}
   audioSource: {fileID: 386724185}
 --- !u!1 &410087039

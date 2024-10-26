@@ -91,6 +91,7 @@ public class Player : MonoBehaviour
         } else if (other.transform.tag == "Deadly")
         {
             Game.singleton.GameOver();
+            SoundEffects.singleton.audioSource.PlayOneShot(SoundEffects.singleton.crash);
             dead = true;
         }
     }
