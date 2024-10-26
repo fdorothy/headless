@@ -6,8 +6,9 @@ public class MeshPath : MonoBehaviour
 {
     public float width = 1.0f;
     public float height = 20f;
-    public int resolutionWidth = 5;
-    public int resolutionHeight = 100;
+    int resolutionWidth = 100;
+    int resolutionHeight = 5;
+    float heightScale = 0.1f;
 
     public Color pathColor = Color.red;
     public Color edgeColor = Color.green;
@@ -36,10 +37,11 @@ public class MeshPath : MonoBehaviour
         for (int i=0; i<resolutionWidth; i++)
         {
             float t = (float)i / (resolutionWidth - 1);
+            float h = GetHeight(t * height);
             for (int j=0; j<resolutionHeight; j++)
             {
                 float s = (float)j / (resolutionHeight - 1);
-                vertices[i + j * resolutionWidth] = new Vector3(t * height, 0f, s * width);
+                vertices[i + j * resolutionWidth] = new Vector3(t * height, 0f, s * width) + Vector3.forward * h;
                 colors[i + j * resolutionWidth] = Color.Lerp(edgeColor, pathColor, TriangleWave(s));
             }
         }
@@ -65,6 +67,13 @@ public class MeshPath : MonoBehaviour
         mesh.colors = colors;
         mesh.RecalculateNormals();
         meshFilter.mesh = mesh;
+    }
+
+    // Gets the heigh of terrain at current position.
+    // Modify this fuction to get different terrain configuration.
+    private float GetHeight(float position)
+    {
+        return (Mathf.Sin(position) + 1.5f + Mathf.Sin(position * 1.75f) + 1f) / 2f * heightScale;
     }
 
     public float TriangleWave(float t)
